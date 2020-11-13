@@ -1,40 +1,34 @@
 import sys
-from random import randint
 
 from PyQt5 import uic
-from PyQt5.QtGui import QColor, QPainter
-from PyQt5.QtWidgets import QApplication
-from PyQt5.QtWidgets import QMainWindow
+from PyQt5.QtSql import *
+from PyQt5.QtWidgets import *
 
 
-class MyWidget(QMainWindow):
+class Example(QWidget):
     def __init__(self):
         super().__init__()
-        uic.loadUi('UI.ui', self)
-        self.draw = False
-        self.pushButton.clicked.connect(self.run)
+        uic.loadUi('main.ui', self)
+        self.initUI()
 
-    def run(self):
-        self.draw = True
-        self.repaint()
+    def initUI(self):
+        db = QSqlDatabase.addDatabase('QSQLITE')
 
-    def paintEvent(self, event):
-        if self.draw:
-            qp = QPainter()
-            qp.begin(self)
-            self.draw_ocr(qp)
-            qp.end()
-        self.draw = False
+        db.setDatabaseName('coffee.sqlite')
 
-    def draw_ocr(self, qp):
-        for i in range(randint(1, 10)):
-            qp.setBrush(QColor(randint(0, 255), randint(0, 255), randint(0, 255)))
-            x, y, r = randint(100, 400), randint(100, 400), randint(25, 100)
-            qp.drawEllipse(x, y, r, r)
+        db.open()
+
+        model = QSqlTableModel(self, db)
+        model.setTable('coffee')
+        model.select()
+
+        # Для отображения данных на виджете
+        # свяжем его и нашу модель данных
+        self.tableView.setModel(model)
 
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    ex = MyWidget()
+    ex = Example()
     ex.show()
     sys.exit(app.exec())
