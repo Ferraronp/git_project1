@@ -28,7 +28,7 @@ class MyWidget(QMainWindow):
 
     def draw_ocr(self, qp):
         for i in range(randint(1, 10)):
-            qp.setBrush(QColor(255, 255, 0))
+            qp.setBrush(QColor(randint(0, 255), randint(0, 255), randint(0, 255)))
             x, y, r = randint(100, 400), randint(100, 400), randint(25, 100)
             qp.drawEllipse(x, y, r, r)
 
